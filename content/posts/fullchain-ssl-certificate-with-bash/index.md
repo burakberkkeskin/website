@@ -3,7 +3,7 @@ authors:
   - Burak Berk
 title: Creating Fullchain SSL Certificate With Bash
 description: Become a local CA for development or self-hosted applications.
-date: 2023-08-17
+date: 2023-07-18
 tags:
   - 'ssl'
   - 'ca'
