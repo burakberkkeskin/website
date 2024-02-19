@@ -18,74 +18,106 @@ categories:
 
 ## Overview
 
-In this tutorial, you will see how to test SMTP settings with a tool named `gomtp` on Linux and macOS cli.
+We all have at least one nodejs application that is dockerized. Typically, we search `nodejs dockerfile yarn` and add the first result to our repository.
 
-`gomtp` is a open-source and free software to test SMTP settings. You can see the source code on the [Github page](https://github.com/safderun/gomtp).
+But how effective are these dockerfiles?
 
-## Install gomtp
+In this tutorial, I will give a example dockerfile for server side nodejs applications.
 
-To install the `gomtp`, you can simply run the command below:
+In this tutorial, we'll discuss how to improve Node.js programs that use the yarn package manager.
 
-```bash
-sudo curl -L -o /usr/local/bin/gomtp "https://github.com/safderun/gomtp/releases/latest/download/gomtp-$(uname -s)-$(uname -m)" && \
-sudo chmod +x /usr/local/bin/gomtp
+## Background of problem
+
+Normally, `npm install` and `yarn install` commands install all dependencies listed in package.json into the node_modules folder. This includes "dependencies" as well as "devDependencies".
+
+However, once you've finished developing and building the application, you no longer require dev dependencies.
+
+So npm handles that by `prune` command. The command `npm prune` goes through node_modules and removes any packages not listed as dependencies in package.json.
+
+Also the --production flag in the `npm prune --production`command tells prune to only remove packages not in "dependencies"
+
+After all, you don't have unnecessary dev and test packages in your production ready docker image.
+
+The reduced size of the optimized image not only improves the overall performance but also minimizes the storage requirements, making it more efficient for deployment and distribution. Additionally, by addressing the vulnerabilities in the not-optimized image, the optimized version enhances security and reduces potential risks for cyberattacks.
+
+## The problem
+
+If you decided to use yarn as it is faster than npm on installing packages, but also want to use prune command, you will notice that yarn package manager has no equivalent command for the "npm prune --production". But we have a trick for that.
+
+## Optimized Dockerfile
+
+First, lets see the full Dockerfile. Then I will explain it.
+
+```Dockerfile
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+COPY . .
+RUN yarn run build
+RUN yarn install --production --ignore-scripts --prefer-offline --frozen-lockfile
+
+FROM node:18-alpine AS runner
+RUN apk add --no-cache tini
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/build ./
+COPY --from=builder /app/package.json ./
+ENTRYPOINT [ "/sbin/tini", "--" ]
+CMD [ "node", "build/server.js" ]
 ```
 
-## SMTP configuration.
+### Let's break this dockerfile into pieces and try to understand it
 
-To test SMTP settings, you first need to configure a yaml file.
+#### Base Image
 
-- Create a file named `gomtp.yaml`.
+> FROM node:18-alpine AS builder
 
-```bash
-vim gomtp.yaml
-```
+You should select alpine version so your builded image will be smaller than normal one.
 
-❗The file name must be `gomtp.yaml` by default.
+#### Building Application
 
-- Configure the SMTP settings for your needs.
+> COPY package.json yarn.lock ./
+> RUN yarn install --frozen-lockfile
+> COPY . .
+> RUN yarn run build
 
-```yaml
-##### Gmail Example #####
-username: 'from@gmail.com'
-password: 'appPassword'
-from: 'from@gmail.com'
-to: 'to@example.com'
-host: 'smtp.gmail.com'
-port: 587
-ssl: false
-tls: true
-auth: 'LOGIN'
-subject: 'Testing Email'
-body: |
-  this is line 1
-  This is line 2
-```
+You are building the image here. The key here is that using cache mechanism of docker while installing npm modules. Unless you don't change the package.json, you don't have to re-install all npm modules again and again.
 
-ℹ You can find some other example configurations under [the repository](https://github.com/safderun/gomtp/blob/master/gomtp.yml).
+#### Pruning Dev Dependencies After Build 👑
 
-## Test the Configuration
+> RUN yarn install --production --ignore-scripts --prefer-offline --frozen-lockfile
 
-Now it's time to test the configuration.
+This command will prune the dev dependencies after the building the image. You have already seen the advantages of removing dev-dependencies.
 
-- Be sure that you are in the same directory with the `gomtp.yaml` file you have just created previously.
+#### We do not reinstall dependencies 👑
 
-- Run the `gomtp` directly with no argument.
+As you can see from the dockerfile, there is no second installation for node modules on the runner stage. This shortens the build time.
 
-```bash
-gomtp
-```
+#### Using tini
 
-- If the configuration is valid, you will see this output.
+Tini is an additional method for optimizing Node.js apps. Node is not an excellent tool for dealing with system signals or zombie processes. For example, if you press control + c, the node program will not stop since node lacks a single handling method. You may solve these issues by using tini (the inverse of init).
 
-```shell
-$ gomtp
-Email sent successfully!
-```
+## Conclusion
 
-- If the configuration is invalid, you will see an error message that describe the problem.
+Let's look at some of the benefits mentioned above.
+The docker image I'm comparing is the same as the optimized one, but without the 'yarn prune' command.
 
-```shell
-$ gomtp
-2023/12/21 11:44:33 535 5.7.8 Error: authentication failed: Invalid user or password! 1703148273-WiJ7lX77XKo0
-```
+### Security
+
+As a part of conclusion, let's check get the security check results of optimized image and not optimized image:
+
+Optimized image has only 10 vulnerability. 4 medium, 6 high.
+
+![Optimized Image Security Scan](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/csryi8b88gafof6dcjk8.png)
+
+Not-optimized image has 33 vulnerability! 13 medium and 20 high.
+
+![Not Optimized Image Security Scan](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/fnvzthaxc8lw4396wjge.png)
+
+### Image Size
+
+Also the optimized image's size is less than half of the unoptimized image. Let's check it out:
+
+![Docker Image Size Comparison](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/lcrozqk49tjfx3zdiw78.png)
