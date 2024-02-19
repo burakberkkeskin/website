@@ -6,7 +6,7 @@ main:
     url: /
     weight: 10
   - name: Blogs
-    url: /post
+    url: /posts
     weight: 20
   - name: Topics
     url: tags/
