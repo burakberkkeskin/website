@@ -1,6 +1,6 @@
 ---
 # Display name
-title: Burak Berk Website
+title: Burak Berk
 
 # Name pronunciation (optional)
 # name_pronunciation: Chien Shiung Wu
