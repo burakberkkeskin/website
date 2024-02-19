@@ -1,16 +1,19 @@
 ---
 authors:
   - Burak Berk
-title: Testing SMTP Settings With Gomtp
-description: Test if your SMTP settings are valid under 5 minutes.
-date: 2023-12-24
+title: Optimize Dockerfile By Yarn Prune
+description: Optimize Dockerfile and your container images by equivalent.
+date: 2023-08-17
 tags:
-  - 'smtp'
-  - 'mail'
-  - 'test'
+  - 'docker'
+  - 'container'
+  - 'nodejs'
+  - 'yarn'
+  - 'ci-cd'
 categories:
   - 'DevOps'
   - 'System Administration'
+  - 'Containers'
 ---
 
 ## Overview
