@@ -1,4 +1,6 @@
-## Overview
+## Overview
+
+This repository contains my personal website and blog page.
 
 ## Tech Stack
 
