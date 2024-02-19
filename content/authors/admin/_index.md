@@ -1,13 +1,13 @@
 ---
 # Display name
-title: 吳健雄
+title: Burak Berk Website
 
 # Name pronunciation (optional)
-name_pronunciation: Chien Shiung Wu
+# name_pronunciation: Chien Shiung Wu
 
 # Full name (for SEO)
-first_name: Shiung Wu
-last_name: Chien
+first_name: Burak Berk
+last_name: Keskin
 
 # Status emoji
 status:
@@ -17,29 +17,28 @@ status:
 superuser: true
 
 # Role/position/tagline
-role: Professor of Artificial Intelligence
+role: DevOps Engineer
 
 # Organizations/Affiliations to show in About widget
-organizations:
-  - name: Stanford University
-    url: https://www.stanford.edu/
+# organizations:
+#   - name: Organization
+#     url: https://example.com/
 
 # Short bio (displayed in user profile at end of posts)
-bio: My research interests include distributed robotics, mobile computing and programmable matter.
+bio: DevOps engineer who can’t get enough of learning and self-improvement.
 
 # Social Networking
 # Need to use another icon? Simply download the SVG icon to your `assets/media/icons/` folder.
 profiles:
   - icon: at-symbol
-    url: 'mailto:your-email@example.com'
+    url: 'mailto:burakberkkeskin@gmail.com'
     label: E-mail Me
+  - icon: brands/github
+    url: https://github.com/burakberkkeskin
   - icon: brands/x
-    url: https://twitter.com/GetResearchDev
-  - icon: brands/instagram
-    url: https://www.instagram.com/
+    url: https://twitter.com/Safderun67
   - icon: brands/linkedin
-    url: https://www.linkedin.com/
-  # Link to a PDF of your resume/CV - upload it to `static/uploads/resume.pdf`
+    url: https://www.linkedin.com/in/burakberkkeskin
   - icon: academicons/cv
     url: uploads/resume.pdf
     label: Download my resume
@@ -51,9 +50,7 @@ profiles:
 highlight_name: true
 
 # Author's website URL
-website: ""
+website: ''
 ---
 
-Chien Shiung Wu is a professor of artificial intelligence at the Stanford AI Lab. Her research interests include
-distributed robotics, mobile computing and programmable matter. She leads the Robotic Neurobiology group, which develops
-self-reconfiguring robots, systems of self-organizing robots, and mobile sensor networks.
+I am a DevOps engineer & system administrator who likes to play with Linux servers.
