@@ -60,10 +60,10 @@ outputs:
   home: [HTML, RSS, headers, redirects]
   section: [HTML, RSS]
 imaging:
-  resampleFilter: lanczos
+  resampleFilter: Lanczos
   quality: 95
-  anchor: smart
-timeout: 600000
+  anchor: Smart
+timeout: '30s'
 taxonomies:
   tag: tags
   category: categories
